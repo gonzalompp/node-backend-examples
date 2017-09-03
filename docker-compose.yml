@@ -1,0 +1,15 @@
+version: '2'
+services:
+  mongodb:
+    image: "mongo"
+    ports:
+     - "27017:27017"
+  backend:
+    build: ./bookapi/
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./bookapi:/usr/src/app
+    command: gulp
+    depends_on:
+      - mongodb
