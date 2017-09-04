@@ -1,30 +1,24 @@
 var express = require('express');
-
-var app = express();
+var mongoose = require('mongoose');
+var bodyParser = require('body-parser');
 
 //environment config
 var port = process.env.PORT || 3000;
 
-var router = express.Router();
+//Dabase connection
+var db = mongoose.connect('mongodb://mongodb/bookapi');
+var Book = require('./models/bookModel');
 
-router.route('/Books')
-	.get(function(req,res) {
-		var responseJson = {
-			hello: 'world 2'
-		};
+//App configuration
+var app = express();
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.json());
 
-		res.json(responseJson);
-	});
-
-
-app.use('/api',router);
-
-
-app.get('/', function(req, res) {
-	res.send('Welcome to the Backend API');
-});
+//Routes
+bookRouter = require('./Routes/bookRoutes')(Book);
+app.use('/api/books',bookRouter);
 
 //connection handler
 app.listen(port,function(){
-	console.log('Gulp is running on port '+port);
+	console.log('Running on port '+port);
 });
