@@ -27,36 +27,36 @@ var routes = function(Book) {
 			});
 		});
 
+	//Middleware for find the book first that will be used in the GET and PATCH
+	bookRouter.use('/:bookId', function(req,res,next) {
+		Book.findById(req.params.bookId, function(err,book) {
+			if (err)
+				res.status(500).send(err);
+			else if (book) {
+				req.book = book;
+
+				//Go to the next Middleware or Route operation
+				next();
+			} else {
+				//book not found
+				res.status(404).send('Book not found');
+			}
+		});
+	});
 	bookRouter.route('/:bookId')
 	.get(function(req,res) {
-
-		var query = {};
-
-		if (req.query.genre)
-			query.genre = req.query.genre;
-
-		Book.findById(req.params.bookId, function(err,book) {
-			if (err)
-				res.status(500).send(err);
-			else {
-				res.json(book);
-			}
-		});
+		res.json(req.book);
 	})
 	.put(function(req,res) {
-		Book.findById(req.params.bookId, function(err,book) {
-			if (err)
-				res.status(500).send(err);
-			else {
-				book.title = req.body.title;
-				book.author = req.body.author;
-				book.genre = req.body.genre;
-				book.read = req.body.read;
-				book.save();
+		let book = req.book;
 
-				res.json(book);
-			}
-		});
+		book.title = req.body.title;
+		book.author = req.body.author;
+		book.genre = req.body.genre;
+		book.read = req.body.read;
+		book.save();
+
+		res.json(book);
 	});
 
 	return bookRouter;
