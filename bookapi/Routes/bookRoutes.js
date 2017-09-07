@@ -57,6 +57,18 @@ var routes = function(Book) {
 		book.save();
 
 		res.json(book);
+	})
+	.patch(function(req,res){
+		if (req.body._id)
+			delete req.body._id;
+
+		let book = req.book;
+
+		for (var p in req.body)
+			book[p] = req.body[p];
+
+		book.save();
+		res.json(book);
 	});
 
 	return bookRouter;
