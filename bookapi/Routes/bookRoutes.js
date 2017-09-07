@@ -69,6 +69,12 @@ var routes = function(Book) {
 
 		book.save();
 		res.json(book);
+	})
+	.delete(function(req,res) {
+		let book = req.book;
+		book.remove();
+
+		res.status(204).send('Book removed');
 	});
 
 	return bookRouter;
